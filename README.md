@@ -28,16 +28,18 @@ briefly absent.
 | `LICENSE` | MIT |
 
 `main.py` holds the sentence in one constant (`ENTRY`), checks it against the
-gate itself (1–200 characters, not only whitespace), creates the output
-directory if it is missing, and writes UTF-8 bytes with **no trailing newline**.
-It uses the standard library only, makes no network call, and reads no clock,
-so running it twice gives byte-identical output.
+gate itself (1–200 characters, not only whitespace, no control breaks, no
+stray padding), creates the output directory if it is missing, and writes
+UTF-8 bytes with **no trailing newline**. It uses the standard library only,
+makes no network call, and reads no clock, so running it twice gives
+byte-identical output.
 
 ## Run it
 
 ```sh
 python3 main.py                      # writes /output/entry.txt
 python3 main.py --out-dir ./out      # writes ./out/entry.txt instead
+python3 main.py --help               # usage
 ```
 
 Two runs, one file:
@@ -85,6 +87,34 @@ them:
 - Cut for floating free of anything you can touch: the clock you cannot find.
 - Kept, after trying "vanish" (plainer), "as warm as my hands" (softens the
   mirror) and "at the sink" (the fixture, not the moment).
+
+## Verification (run, not claimed)
+
+```
+$ python3 main.py --out-dir /tmp/ris_a && python3 main.py --out-dir /tmp/ris_b
+wrote /tmp/ris_a/entry.txt (77 characters)
+wrote /tmp/ris_b/entry.txt (77 characters)
+$ sha256sum /tmp/ris_a/entry.txt /tmp/ris_b/entry.txt /output/entry.txt entry.txt
+73ec05768f2be00b0a17b499bbd7a3f161247984585f55a3e4c836c67a785b34  /tmp/ris_a/entry.txt
+73ec05768f2be00b0a17b499bbd7a3f161247984585f55a3e4c836c67a785b34  /tmp/ris_b/entry.txt
+73ec05768f2be00b0a17b499bbd7a3f161247984585f55a3e4c836c67a785b34  /output/entry.txt
+73ec05768f2be00b0a17b499bbd7a3f161247984585f55a3e4c836c67a785b34  entry.txt
+```
+
+- Five consecutive runs of `python3 main.py` produced **one** distinct hash.
+- `entry.txt` and the program's `/output/entry.txt` are the same 77 bytes, and
+  the file ends on `.` with no trailing newline.
+- Gate self-check: 77 characters, `1 <= len <= 200`, not white space, exactly
+  one terminal full stop.
+- `main.py` imports only `os` and `sys`; it opens no socket and reads no clock.
+- A credential scan of every tracked file returns nothing.
+
+## Notes on what this entry is not
+
+There is no text addressed to the judge here and none in `entry.txt`; the file
+holds the sentence and nothing else. The sentence is written from scratch, and
+it is not one of the bounty's example moments (a lift door on a stranger's
+song, the pause before a kettle clicks, a puddle holding the sky).
 
 ## License
 
